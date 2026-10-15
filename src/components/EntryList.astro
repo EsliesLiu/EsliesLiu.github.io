@@ -1,0 +1,33 @@
+---
+import PostCard from './PostCard.astro';
+import Reveal from './Reveal';
+import type { ArticleCard } from '../lib/content';
+
+interface Props {
+  items: ArticleCard[];
+  motion?: boolean;
+}
+
+const { items, motion = true } = Astro.props;
+---
+
+{
+  items.length === 0 ? (
+    <slot name="empty" />
+  ) : (
+    <ul class="entry-grid">
+      {items.map((card, index) => (
+        <li>
+          {/* 只给前几张挂岛屿。再往下的列表不值得每张都加载 GSAP。 */}
+          {motion && index < 8 ? (
+            <Reveal client:load className="post-reveal" delay={Math.min(index, 5) * 0.07}>
+              <PostCard card={card} />
+            </Reveal>
+          ) : (
+            <PostCard card={card} />
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}

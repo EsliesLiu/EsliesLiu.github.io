@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EntryList from '../components/EntryList.astro';
+import HeroBackdrop from '../components/HeroBackdrop';
+import HeroTitle from '../components/HeroTitle';
+import GradientText from '../components/GradientText/GradientText';
+import { getPosts, toCard } from '../lib/content';
+import { site } from '../site';
+
+const posts = (await getPosts()).slice(0, 4).map((post) => toCard('posts', post));
+---
+
+<BaseLayout flush>
+  <section class="hero">
+    <div class="hero-fallback" aria-hidden="true"></div>
+    <HeroBackdrop client:idle />
+    <div class="shell hero-copy">
+      <h1 class="hero-title">
+        {/* client:only：不产出 opacity:0 的 SSR 节点。fallback 在 JS 挂上前显示名字。 */}
+        <HeroTitle client:only="react" text={site.name}>
+          {site.name}
+        </HeroTitle>
+      </h1>
+      <p>
+        <GradientText
+          client:load
+          className="role-text"
+          colors={['#7ee0ff', '#d7f6ff', '#e8e6e3']}
+          animationSpeed={14}
+        >
+          {site.role}
+        </GradientText>
+      </p>
+      <p class="hero-intro">{site.intro}</p>
+      <p class="hero-actions">
+        <a href="/posts/">最近文章</a>
+        <a href="/about/">关于</a>
+      </p>
+    </div>
+  </section>
+  <section class="recent">
+    <div class="shell">
+      <div class="section-head">
+        <h2>最近更新</h2>
+        <a href="/posts/">全部</a>
+      </div>
+      <EntryList items={posts}>
+        <p slot="empty" class="empty-copy">还没有公开的文章。</p>
+      </EntryList>
+    </div>
+  </section>
+</BaseLayout>

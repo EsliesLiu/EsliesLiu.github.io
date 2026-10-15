@@ -1,0 +1,28 @@
+---
+import { articleHref, formatDate, type ArticleCard } from '../lib/content';
+
+interface Props {
+  card: ArticleCard;
+}
+
+const { card } = Astro.props;
+---
+
+<a class="post-card" href={articleHref(card.kind, card.id)}>
+  <div class="post-card-meta">
+    <time datetime={card.date.toISOString()}>{formatDate(card.date)}</time>
+    {/* 线上构建不会列出草稿，这个标记只出现在本地预览。 */}
+    {card.draft && <span class="draft-flag">草稿</span>}
+  </div>
+  <h3>{card.title}</h3>
+  <p>{card.description}</p>
+  {
+    card.tags.length > 0 && (
+      <ul class="tag-list">
+        {card.tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
+      </ul>
+    )
+  }
+</a>

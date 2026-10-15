@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const page = (await getCollection('profile'))[0];
+if (!page) {
+  throw new Error('缺少 content/about.md');
+}
+const { Content } = await render(page);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <article class="article">
+    <header>
+      <h1>{page.data.title}</h1>
+    </header>
+    <div class="prose prose-invert max-w-none">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

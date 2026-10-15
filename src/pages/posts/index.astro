@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPosts, toCard } from '../../lib/content';
+
+const posts = (await getPosts()).map((post) => toCard('posts', post));
+// 第一枚标签是 Obsidian 的顶层目录。按最近更新过的目录往下排。
+const groups = new Map<string, typeof posts>();
+for (const post of posts) {
+  const name = post.tags[0] ?? '未分类';
+  const list = groups.get(name) ?? [];
+  list.push(post);
+  groups.set(name, list);
+}
+---
+
+<BaseLayout title="文章" description="Obsidian 里的笔记，按目录分组。">
+  <div class="shell">
+    <header class="page-header">
+      <h1>文章</h1>
+      <p>Obsidian 里的笔记，按目录分组。目录里最新的一篇决定这个目录排在前面。</p>
+    </header>
+    {
+      posts.length === 0 ? (
+        <p class="empty-copy">还没有公开的文章。</p>
+      ) : (
+        [...groups.entries()].map(([name, items]) => (
+          <section class="note-group">
+            <div class="section-head">
+              <h2>{name}</h2>
+              <span>{items.length} 篇</span>
+            </div>
+            <EntryList items={items} motion={false} />
+          </section>
+        ))
+      )
+    }
+  </div>
+</BaseLayout>

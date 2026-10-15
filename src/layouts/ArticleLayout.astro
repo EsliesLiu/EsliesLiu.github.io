@@ -1,0 +1,49 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { formatDate } from '../lib/content';
+
+interface Props {
+  kind: 'post' | 'essay';
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+  minutes: number;
+  draft?: boolean;
+}
+
+const { kind, title, description, date, tags, minutes, draft = false } = Astro.props;
+const back = kind === 'post' ? { href: '/posts/', label: '文章' } : { href: '/essays/', label: '随笔' };
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  accent={kind === 'essay' ? 'essays' : 'posts'}
+  ogType="article"
+>
+  <article class="article">
+    <a class="back" href={back.href}>{back.label}</a>
+    <header>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      <p class="article-meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span>约 {minutes} 分钟</span>
+        {draft && <span class="draft-flag">草稿</span>}
+      </p>
+      {
+        tags.length > 0 && (
+          <ul class="tag-list">
+            {tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    <div class="prose prose-invert max-w-none">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
