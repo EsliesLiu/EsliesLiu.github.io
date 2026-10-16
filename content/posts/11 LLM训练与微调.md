@@ -1,7 +1,7 @@
 ---
 title: "11 LLM训练与微调"
 date: 2026-09-23
-description: "LLM 的训练不是一步到位的，而是一个多阶段的渐进式能力塑造过程。Andrej Karpathy 在其 \"State of GPT\" 演讲中将这个流程清晰地划分为四个阶段 <s…"
+description: "LLM 的训练不是一步到位的，而是一个多阶段的渐进式能力塑造过程。Andrej Karpathy 在其 \"State of GPT\" 演讲中将这个流程清晰地划分为四个阶段 [1…"
 tags:
   - "AI相关学习"
   - "面试"

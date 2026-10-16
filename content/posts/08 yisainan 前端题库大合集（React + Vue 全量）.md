@@ -1,7 +1,7 @@
 ---
 title: "08 yisainan 前端题库大合集（React + Vue 全量）"
 date: 2026-10-16
-description: "<b<details<summary1.当你调用 setState 的时候，发生了什么事？</summary</b"
+description: "1.当你调用 setState 的时候，发生了什么事？"
 tags:
   - "前端面经"
   - "面试"
@@ -378,7 +378,7 @@ function CustomForm ({handleSubmit}) {
 
 Redux是将整个应用状态存储到一个地方上称为store, 里面保存着一个状态树store tree, 组件可以派发(dispatch)行为(action)给store, 而不是直接通知其他组件，组件内部通过订阅store中的状态state来刷新自己的视图。
 
-![redux工作流](../../images/react_001.png)
+（缺少本地图片：redux工作流 / react_001.png）
 
 3、Redux三大原则
 
@@ -871,7 +871,7 @@ React.cloneElement(
 
 可以看到，所有的 JSX 标签都被转化成了 React.createElement 调用，这也就意味着，我们写的 JSX 其实写的就是 React.createElement。
 
-![Babel编译的例子](../../images/react_003.png)
+（缺少本地图片：Babel编译的例子 / react_003.png）
 
 这里我们可以得出结论：JSX 的本质其实是React.createElement这个 JavaScript 调用的语法糖。
 
@@ -959,7 +959,7 @@ React.cloneElement(
 
 参考答案：
 
-![vue_002](../../images/vue_002.jpg)
+（缺少本地图片：vue_002 / vue_002.jpg）
 
 （1） beforeCreate 初始化实例后 数据观测和事件配置之前调用
 
@@ -1534,7 +1534,7 @@ var app = new Vue({
 既没有传入实参，也没有接收的形参，这个 event 对象的来源，要么是上级作用链，要么。。。是全局作用域。。。全局的，不禁想到了 window.event
 。再次上 MDN 确认了一下，果然，window.event，ie 和 chrome 都在 window 对象上有这样一个属性：
 
-![vue_003](../../images/vue_003.jpg)
+（缺少本地图片：vue_003 / vue_003.jpg）
 
 代码丢进 Firefox 中运行，event 果然就变成了 undefined 了。额，这个我也不知道说什么了。。。
 
@@ -2055,9 +2055,9 @@ vue 的生命周期就是 vue 实例从创建到销毁的过程
 
 解析：
 
-![vue_004](../../images/vue_004.jpg)
+（缺少本地图片：vue_004 / vue_004.jpg）
 
-![vue_005](../../images/vue_005.jpg)
+（缺少本地图片：vue_005 / vue_005.jpg）
 
 [参与互动](https://github.com/yisainan/web-interview/issues/415)
 
@@ -2067,7 +2067,7 @@ vue 的生命周期就是 vue 实例从创建到销毁的过程
 
 参考答案：
 
-![vue_005](../../images/vue_005.jpg)
+（缺少本地图片：vue_005 / vue_005.jpg）
 
 [参与互动](https://github.com/yisainan/web-interview/issues/416)
 
@@ -2764,7 +2764,7 @@ ViewModel 通过双向数据绑定把 View 层和 Model 层连接了起来，而
 
 通信方式如下
 
-![架构_001](../../images/架构_001.png)
+（缺少本地图片：架构_001 / 架构_001.png）
 
 1. 视图（View）：用户界面。 传送指令到 Controller
 
@@ -2776,7 +2776,7 @@ ViewModel 通过双向数据绑定把 View 层和 Model 层连接了起来，而
 
 通信方式如下
 
-![架构_002](../../images/架构_002.png)
+（缺少本地图片：架构_002 / 架构_002.png）
 
 1. 各部分之间的通信，都是双向的。
 
@@ -2788,7 +2788,7 @@ ViewModel 通过双向数据绑定把 View 层和 Model 层连接了起来，而
 
 MVVM 模式将 Presenter 改名为 ViewModel，基本上与 MVP 模式完全一致。通信方式如下
 
-![架构_003](../../images/架构_003.png)
+（缺少本地图片：架构_003 / 架构_003.png）
 
 唯一的区别是，它采用双向绑定（data-binding）：View 的变动，自动反映在 ViewModel，反之亦然。
 
@@ -3040,7 +3040,7 @@ vue-cli 生成 生产环境部署资源 的 npm 命令：npm run build
 
 命令效果：
 
-![vue_001](../../images/vue_001.jpg)
+（缺少本地图片：vue_001 / vue_001.jpg）
 
 在浏览器上自动弹出一个 展示 vue-cli 工程打包后 app.js、manifest.js、vendor.js 文件里面所包含代码的页面。可以具此优化 vue-cli 生产环境部署的静态资源，提升 页面 的加载速度。
 
@@ -3373,7 +3373,7 @@ a.	通过数据劫持实现
 
 ##### 原理结构图
 
-![vue_006](../../images/vue_006.png)
+（缺少本地图片：vue_006 / vue_006.png）
 
 </details>
 
@@ -5243,7 +5243,7 @@ Vuex使用vue中的reactive方法将state设置为响应式，这样组件就可
 3. dom如何生成，又如何成为真实dom？以及在diff中的作用
 
  - 在vue中我们常常会为组件编写模板template，这个模板会被编译器compiler编译为渲染函数（render function），在接下来的挂载（mount）过程中会调用render函数，返回的对象就是虚拟dom。但它们还不是真正的dom，会在后续的patch过程中进一步转化为真实dom：
-![vue_007](../../images/vue_007.jpg)
+（缺少本地图片：vue_007 / vue_007.jpg）
 
 4. 挂载过程结束后，vue程序进入更新流程。如果某些响应式数据发生变化，将会引起组件重新render，此时就
 会生成新的vdom，和上一次的渲染结果diff就能得到变化的地方，从而转换为最小量的dom操作，高效更新

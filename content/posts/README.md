@@ -1,7 +1,7 @@
 ---
 title: "README"
 date: 2026-09-23
-description: "<div align=\"center\""
+description: "国内最全的 AI Agent 工程师面试知识库"
 tags:
   - "AI相关学习"
 draft: false

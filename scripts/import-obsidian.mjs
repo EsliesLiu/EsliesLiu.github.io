@@ -42,7 +42,7 @@ function splitFrontmatter(text) {
 function descriptionOf(body, title) {
   const chunks = [];
   for (const line of body.split('\n')) {
-    const text = line.trim();
+    let text = line.trim();
     if (!text) {
       if (chunks.length) break;
       continue;
@@ -50,6 +50,9 @@ function descriptionOf(body, title) {
     if (/^(#|>|\||---|\*\*\*|```)/.test(text)) continue;
     if (/^https?:\/\//.test(text)) continue;
     if (text.startsWith('![')) continue;
+    // 合集笔记第一段经常是 <details><summary>，标签本身不能当摘要。
+    text = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!text) continue;
     chunks.push(text);
     if (chunks.join('').length > 100) break;
   }
@@ -57,7 +60,7 @@ function descriptionOf(body, title) {
     .join(' ')
     .replace(/!\[[^\]]*]\([^)]*\)/g, '')
     .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
-    .replace(/[*_`>#]/g, '')
+    .replace(/[*_`#]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
   if (!text) text = title;
@@ -120,17 +123,56 @@ for (const file of notes) {
   titles.set(title, postHref(title));
 }
 
-function rewriteBody(body) {
-  let next = body.replace(/!\[\[([^\]|#]+)(?:\|[^\]]+)?\]\]/g, (full, target) => {
-    const base = path.basename(target.trim());
-    const asset = copiedAssets.get(base);
-    return asset ? `![](${asset})` : full;
+const missingImages = [];
+
+function isRemoteUrl(url) {
+  const src = url.trim();
+  return /^(https?:)?\/\//.test(src) || src.startsWith('data:');
+}
+
+function assetFor(url) {
+  const src = url.trim().replace(/^<|>$/g, '').split(/\s+/)[0].split('?')[0];
+  let base = path.basename(src);
+  try {
+    base = decodeURIComponent(base);
+  } catch {
+    // 文件名本身不是合法转义时，按原样查找。
+  }
+  return copiedAssets.get(base) ?? null;
+}
+
+function missingLabel(alt, url) {
+  const file = path.basename(url.trim().split(/\s+/)[0].split('?')[0]);
+  const name = alt.trim();
+  return name && name !== file ? `（缺少本地图片：${name} / ${file}）` : `（缺少本地图片：${file}）`;
+}
+
+function rewriteSegment(segment, title) {
+  let next = segment.replace(/!\[\[([^\]|#]+)(?:\|[^\]]+)?\]\]/g, (full, target) => {
+    const raw = target.trim();
+    const asset = copiedAssets.get(path.basename(raw));
+    if (asset) return `![](${asset})`;
+    // 嵌入的是图片但库里没有文件。留着 ![[ ]] 没问题，写成 ![](路径) 会让构建失败。
+    if (!IMAGE_EXT.has(path.extname(raw).toLowerCase())) return full;
+    missingImages.push({ title, ref: raw });
+    return missingLabel('', raw);
   });
   next = next.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (full, alt, url) => {
-    const clean = url.trim();
-    if (/^https?:\/\//.test(clean)) return full;
-    const asset = copiedAssets.get(path.basename(clean));
-    return asset ? `![${alt}](${asset})` : full;
+    const src = url.trim().split(/\s+/)[0];
+    if (isRemoteUrl(src)) return full;
+    const asset = assetFor(src);
+    if (asset) return `![${alt}](${asset})`;
+    // Astro 会把本地图片当成构建资源，文件不存在就整站失败。改成纯文本，正文还在。
+    missingImages.push({ title, ref: src });
+    return missingLabel(alt, src);
+  });
+  next = next.replace(/<img\b[^>]*\bsrc\s*=\s*(["'])([^"']+)\1[^>]*>/gi, (full, _quote, src) => {
+    if (isRemoteUrl(src) || src.includes('{')) return full;
+    const asset = assetFor(src);
+    if (asset) return full.replace(src, asset);
+    const alt = full.match(/\balt\s*=\s*["']([^"']*)["']/i)?.[1] ?? '';
+    missingImages.push({ title, ref: src });
+    return missingLabel(alt, src);
   });
   next = next.replace(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g, (full, target, alias) => {
     const name = path.basename(target.trim());
@@ -139,6 +181,12 @@ function rewriteBody(body) {
     return href ? `[${label}](${href})` : label;
   });
   return next;
+}
+
+function rewriteBody(body, title) {
+  // 代码块里的示例图片不是页面资源，不能改，也不能拿去参与构建。
+  const parts = body.split(/(```[\s\S]*?```)/g);
+  return parts.map((part, index) => (index % 2 === 1 ? part : rewriteSegment(part, title))).join('');
 }
 
 const previous = fs.existsSync(manifestPath)
@@ -153,7 +201,7 @@ for (const file of notes) {
   const raw = fs.readFileSync(file, 'utf8');
   const { tags: noteTags, body } = splitFrontmatter(raw);
   const tags = [...new Set([folder, ...noteTags])];
-  const rewritten = rewriteBody(body).trim();
+  const rewritten = rewriteBody(body, title).trim();
   const stat = fs.statSync(file);
   const frontmatter = [
     '---',
@@ -182,3 +230,7 @@ for (const name of previous) {
 fs.writeFileSync(manifestPath, `${JSON.stringify(imported, null, 2)}\n`);
 console.log(`已导入 ${imported.length} 篇，附件 ${images.length} 个`);
 console.log(`来源：${vault}`);
+if (missingImages.length) {
+  console.log(`库里没有、已改成文字占位的图片 ${missingImages.length} 处：`);
+  for (const item of missingImages) console.log(`- ${item.title} -> ${item.ref}`);
+}
