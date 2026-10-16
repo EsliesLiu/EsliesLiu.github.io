@@ -47,10 +47,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#07080d" />
     <script is:inline>
-      document.documentElement.classList.add('js');
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.classList.add('reduce-motion');
-      }
+      (function () {
+        var root = document.documentElement;
+        var theme = 'dark';
+        try {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'light' || stored === 'dark') theme = stored;
+        } catch (err) {}
+        // 先写到 html 上，避免正文先按黑夜画一帧再跳到白天。
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f8f7f2' : '#07080d');
+        root.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          root.classList.add('reduce-motion');
+        }
+      })();
     </script>
     <noscript>
       <style>

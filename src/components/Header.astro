@@ -16,14 +16,63 @@ function isActive(href: string) {
 <header class="site-header">
   <div class="shell header-inner">
     <a class="brand" href="/" aria-current={pathname === '/' ? 'page' : undefined}>{site.name}</a>
-    <nav aria-label="主导航">
-      {
-        links.map((link) => (
-          <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
-            {link.label}
-          </a>
-        ))
-      }
-    </nav>
+    <div class="header-tools">
+      <nav aria-label="主导航">
+        {
+          links.map((link) => (
+            <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="切换到白天">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+          <path
+            d="M12 3.5v2.2M12 18.3V20.5M3.5 12h2.2M18.3 12h2.2M6.1 6.1l1.5 1.5M16.4 16.4l1.5 1.5M17.9 6.1l-1.5 1.5M7.6 16.4l-1.5 1.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M15.2 3.8a7.4 7.4 0 1 0 5 11.6A6.6 6.6 0 0 1 15.2 3.8Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    var button = document.querySelector('[data-theme-toggle]');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var bg = { dark: '#07080d', light: '#f8f7f2' };
+    var label = { dark: '切换到白天', light: '切换到黑夜' };
+
+    function sync(theme) {
+      if (meta) meta.setAttribute('content', bg[theme]);
+      if (button) button.setAttribute('aria-label', label[theme]);
+    }
+
+    var current = root.dataset.theme === 'light' ? 'light' : 'dark';
+    sync(current);
+    if (!button) return;
+
+    button.addEventListener('click', function () {
+      var next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      root.dataset.theme = next;
+      root.style.colorScheme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch (err) {}
+      sync(next);
+    });
+  })();
+</script>
