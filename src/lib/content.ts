@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type ArticleKind = 'posts' | 'essays';
@@ -44,6 +46,40 @@ export async function getEssays() {
   return essays.filter(isPublished).sort(byDateDesc);
 }
 
+// 首页「最近更新」看文件修改时间。frontmatter 的 date 是写入日期，同一天会停在原来的顺序上。
+const RECENT_LIMIT = 4;
+
+function updatedMs(entry: ArticleEntry) {
+  const written = entry.data.date.valueOf();
+  if (!entry.filePath) return written;
+  try {
+    return fs.statSync(path.resolve(entry.filePath)).mtimeMs;
+  } catch {
+    return written;
+  }
+}
+
+export async function getRecent(limit = RECENT_LIMIT) {
+  const [posts, essays] = await Promise.all([getCollection('posts'), getCollection('essays')]);
+  const entries = [
+    ...posts.map((entry) => ({ entry, kind: 'posts' as const })),
+    ...essays.map((entry) => ({ entry, kind: 'essays' as const })),
+  ];
+  return entries
+    .filter(({ entry }) => isPublished(entry))
+    .sort((a, b) => {
+      const delta = updatedMs(b.entry) - updatedMs(a.entry);
+      if (delta !== 0) return delta;
+      return byDateDesc(a.entry, b.entry);
+    })
+    .slice(0, limit)
+    .map(({ entry, kind }) => ({
+      ...toCard(kind, entry),
+      // 卡片上的时间和排序用同一套修改时间，避免日期看着是乱的。
+      date: new Date(updatedMs(entry)),
+    }));
+}
+
 export function toCard(kind: ArticleKind, entry: ArticleEntry): ArticleCard {
   return {
     id: entry.id,
@@ -54,6 +90,18 @@ export function toCard(kind: ArticleKind, entry: ArticleEntry): ArticleCard {
     tags: entry.data.tags,
     draft: entry.data.draft === true,
   };
+}
+
+// 文章按 Obsidian 顶层目录分组。列表已按时间倒序，目录第一次出现的位置就是它最新的一篇。
+export function groupByFirstTag(items: ArticleCard[]) {
+  const groups = new Map<string, ArticleCard[]>();
+  for (const item of items) {
+    const name = item.tags[0] ?? '未分类';
+    const list = groups.get(name) ?? [];
+    list.push(item);
+    groups.set(name, list);
+  }
+  return [...groups.entries()];
 }
 
 export function articleHref(kind: ArticleKind, id: string) {

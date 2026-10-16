@@ -112,26 +112,44 @@ body {
 
 .header-tools {
   display: flex;
+  flex: 1;
   align-items: center;
-  gap: 1.25rem;
+  justify-content: flex-end;
+  gap: 0.85rem;
   min-width: 0;
 }
 
-.site-header nav,
+/* 宽度按主题按钮留白。PillNav 量的是这一层，不是外面的 astro-island。 */
+.header-nav {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: calc(100% - 2.75rem);
+}
+
+.header-nav astro-island {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+/* 收起后按钮靠右，下拉保持能读完三个字，不跟着整行拉满。 */
+.pill-nav[data-collapsed] {
+  width: 10.5rem;
+  max-width: 100%;
+  justify-content: flex-end;
+}
+
 .site-footer nav {
   display: flex;
   gap: 1.25rem;
 }
 
-.site-header nav a,
 .site-footer nav a {
   color: var(--color-muted);
   text-decoration: none;
   font-size: 0.95rem;
-}
-
-.site-header nav a[aria-current="page"] {
-  color: var(--color-accent);
 }
 
 .theme-toggle {
@@ -223,12 +241,18 @@ html[data-theme="light"] .theme-toggle .icon-sun {
   font-weight: 500;
 }
 
-.hero-intro {
-  max-width: 36rem;
-  margin: 1.25rem 0 0;
+.archive-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem 0.85rem;
+  margin: 1.6rem 0 0;
+}
+
+.archive-count-label,
+.archive-count-unit {
   color: var(--color-muted);
-  font-size: 1.125rem;
-  line-height: 1.7;
+  font-size: 0.95rem;
 }
 
 .hero-actions {
@@ -251,17 +275,127 @@ html[data-theme="light"] .theme-toggle .icon-sun {
   color: var(--color-accent);
 }
 
+.scroll-band {
+  padding: 5.5rem 0 0.5rem;
+  overflow-x: clip;
+}
+
+.scroll-reveal {
+  max-width: min(36rem, 100%);
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.scroll-reveal > span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
 .recent {
   padding: 1rem 0 5rem;
 }
 
-.note-group + .note-group {
-  margin-top: 2.75rem;
+.recent-gallery a {
+  background: var(--color-bg);
+  font-family: var(--font-display);
 }
 
-.note-group .section-head span {
+.note-group + .note-group {
+  /* margin-top: 2rem; */
+}
+
+.note-group .section-head {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.note-group.is-collapsed .section-head {
+  margin-bottom: 0;
+}
+
+.note-group-toggle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.note-group-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.note-group-chevron {
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
   color: var(--color-muted);
+}
+
+.note-group-count {
+  flex: none;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
   font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+/* 用 grid 行高从 1fr 收到 0fr，高度才能跟着内容过渡，而不是写死 max-height。 */
+.note-group-panel {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.note-group.is-collapsed .note-group-panel {
+  grid-template-rows: 0fr;
+}
+
+.note-group-panel-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .note-group .section-head,
+  .note-group-chevron,
+  .note-group-panel,
+  .note-group-panel-inner {
+    transition:
+      margin-bottom 320ms ease,
+      transform 320ms ease,
+      grid-template-rows 320ms ease,
+      opacity 220ms ease;
+  }
+
+  .note-group.is-collapsed .note-group-chevron {
+    transform: rotate(-90deg);
+  }
+
+  .note-group.is-collapsed .note-group-panel-inner {
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .note-group-toggle:hover .note-group-name {
+    color: var(--color-accent);
+  }
 }
 
 .section-head,
@@ -322,6 +456,7 @@ html[data-theme="light"] .theme-toggle .icon-sun {
   margin: 0;
   padding: 0;
   list-style: none;
+  padding-top: 0.5rem;
 }
 
 .entry-grid li {
@@ -535,9 +670,8 @@ html[data-theme="light"] .prose :where(pre) {
     grid-template-columns: 1fr;
   }
 
-  .header-tools,
-  .site-header nav {
-    gap: 0.85rem;
+  .header-tools {
+    gap: 0.65rem;
   }
 }
 

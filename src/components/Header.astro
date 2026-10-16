@@ -1,5 +1,6 @@
 ---
 import { site } from '../site';
+import SitePillNav from './SitePillNav';
 
 const pathname = Astro.url.pathname;
 const links = [
@@ -8,24 +9,17 @@ const links = [
   { href: '/about/', label: '关于' },
 ];
 
-function isActive(href: string) {
-  return pathname === href || pathname.startsWith(href);
-}
+// PillNav 用完整 href 判断当前项，文章内页要落到「文章」上。
+const activeHref = links.find((link) => pathname === link.href || pathname.startsWith(link.href))?.href ?? '';
 ---
 
-<header class="site-header">
+<header class="site-header" transition:persist="site-header" transition:animate="none">
   <div class="shell header-inner">
     <a class="brand" href="/" aria-current={pathname === '/' ? 'page' : undefined}>{site.name}</a>
     <div class="header-tools">
-      <nav aria-label="主导航">
-        {
-          links.map((link) => (
-            <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
-              {link.label}
-            </a>
-          ))
-        }
-      </nav>
+      <div class="header-nav">
+        <SitePillNav client:load activeHref={activeHref} />
+      </div>
       <button type="button" class="theme-toggle" data-theme-toggle aria-label="切换到白天">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
@@ -51,28 +45,60 @@ function isActive(href: string) {
 <script is:inline>
   (function () {
     var root = document.documentElement;
-    var button = document.querySelector('[data-theme-toggle]');
-    var meta = document.querySelector('meta[name="theme-color"]');
     var bg = { dark: '#07080d', light: '#f8f7f2' };
     var label = { dark: '切换到白天', light: '切换到黑夜' };
 
+    function toggle() {
+      return document.querySelector('[data-theme-toggle]');
+    }
+
     function sync(theme) {
+      var meta = document.querySelector('meta[name="theme-color"]');
+      var button = toggle();
       if (meta) meta.setAttribute('content', bg[theme]);
       if (button) button.setAttribute('aria-label', label[theme]);
     }
 
-    var current = root.dataset.theme === 'light' ? 'light' : 'dark';
-    sync(current);
-    if (!button) return;
+    // 顶栏节点被留下来之后，站名的当前页标记不会跟着服务端重算。
+    function syncBrand() {
+      var brand = document.querySelector('.site-header .brand');
+      if (!brand) return;
+      if (location.pathname === '/') brand.setAttribute('aria-current', 'page');
+      else brand.removeAttribute('aria-current');
+    }
 
-    button.addEventListener('click', function () {
-      var next = root.dataset.theme === 'light' ? 'dark' : 'light';
-      root.dataset.theme = next;
-      root.style.colorScheme = next;
-      try {
-        localStorage.setItem('theme', next);
-      } catch (err) {}
-      sync(next);
-    });
+    sync(root.dataset.theme === 'light' ? 'light' : 'dark');
+    syncBrand();
+
+    var button = toggle();
+    // 换页会重跑这段脚本。按钮还是原来那个，监听只能绑一次。
+    if (button && !button.dataset.bound) {
+      button.dataset.bound = '1';
+      button.addEventListener('click', function () {
+        var next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        root.style.colorScheme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch (err) {}
+        sync(next);
+      });
+    }
+
+    if (!root.dataset.headerNavBound) {
+      root.dataset.headerNavBound = '1';
+      // 换页会清掉 html 上的 data-theme。这里按本地记录写回去，避免闪回黑夜。
+      document.addEventListener('astro:page-load', function () {
+        var theme = 'dark';
+        try {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'light' || stored === 'dark') theme = stored;
+        } catch (err) {}
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+        sync(theme);
+        syncBrand();
+      });
+    }
   })();
 </script>

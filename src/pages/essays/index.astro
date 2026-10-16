@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import EntryList from '../../components/EntryList.astro';
-import { getEssays, toCard } from '../../lib/content';
+import NoteGroup from '../../components/NoteGroup.astro';
+import { getEssays, groupByFirstTag, toCard } from '../../lib/content';
 
-const essays = (await getEssays()).map((essay) => toCard('essays', essay));
+const groups = groupByFirstTag((await getEssays()).map((essay) => toCard('essays', essay)));
 ---
 
 <BaseLayout title="随笔" description="不写成教程的东西放这里。" accent="essays">
@@ -12,12 +12,18 @@ const essays = (await getEssays()).map((essay) => toCard('essays', essay));
       <h1>随笔</h1>
       <p>不写成教程的东西放这里。</p>
     </header>
-    <EntryList items={essays}>
-      <div slot="empty" class="empty">
-        <p class="empty-copy">
-          还没有公开的随笔。技术笔记在 <a href="/posts/">文章</a> 里。
-        </p>
-      </div>
-    </EntryList>
+    {
+      groups.length === 0 ? (
+        <div class="empty">
+          <p class="empty-copy">
+            还没有公开的随笔。技术笔记在 <a href="/posts/">文章</a> 里。
+          </p>
+        </div>
+      ) : (
+        groups.map(([name, items], index) => (
+          <NoteGroup name={name} items={items} panelId={`essay-group-${index}`} motion />
+        ))
+      )
+    }
   </div>
 </BaseLayout>

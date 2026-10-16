@@ -1,0 +1,87 @@
+---
+import EntryList from './EntryList.astro';
+import type { ArticleCard } from '../lib/content';
+
+interface Props {
+  name: string;
+  items: ArticleCard[];
+  panelId: string;
+  motion?: boolean;
+}
+
+const { name, items, panelId, motion = false } = Astro.props;
+---
+
+<section class="note-group">
+  <h2 class="section-head">
+    <button
+      type="button"
+      class="note-group-toggle"
+      data-note-toggle
+      aria-expanded="true"
+      aria-controls={panelId}
+    >
+      <span class="note-group-name">
+        {name}
+        <svg class="note-group-chevron" viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M3.5 6.2 8 10.8l4.5-4.6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </span>
+      <span class="note-group-count">{items.length} 篇</span>
+    </button>
+  </h2>
+  <div class="note-group-panel" id={panelId}>
+    <div class="note-group-panel-inner">
+      <EntryList items={items} motion={motion} />
+    </div>
+  </div>
+</section>
+
+<script>
+  // 组件会被每组用一次，这段脚本由 Astro 合并成一份。
+  const reduce =
+    document.documentElement.classList.contains('reduce-motion') ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLButtonElement>('[data-note-toggle]').forEach((button) => {
+    const group = button.closest<HTMLElement>('.note-group');
+    const panelId = button.getAttribute('aria-controls');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    if (!group || !panel || button.dataset.bound === '1') return;
+    button.dataset.bound = '1';
+
+    const lockIfCollapsed = () => {
+      if (group.classList.contains('is-collapsed')) panel.inert = true;
+    };
+
+    button.addEventListener('click', () => {
+      const willCollapse = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', willCollapse ? 'false' : 'true');
+      group.classList.toggle('is-collapsed', willCollapse);
+
+      if (!willCollapse) {
+        // 先解开再播展开，否则里面的链接在动画过程中点不到。
+        panel.inert = false;
+        return;
+      }
+
+      if (reduce) {
+        lockIfCollapsed();
+        return;
+      }
+
+      const onEnd = (event: TransitionEvent) => {
+        if (event.target !== panel || event.propertyName !== 'grid-template-rows') return;
+        panel.removeEventListener('transitionend', onEnd);
+        lockIfCollapsed();
+      };
+      panel.addEventListener('transitionend', onEnd);
+    });
+  });
+</script>
