@@ -1,6 +1,6 @@
 ---
 title: "前端+AI Agent 面经资源与高频题"
-date: 2026-09-23
+date: 2026-10-16
 description: "- 最新 AI Agent / 大模型面经索引(2026) — 按公司分类,含 2026-08/09 最新一手复盘"
 tags:
   - "AI相关学习"
@@ -16,6 +16,7 @@ draft: false
 
 > 整理时间:2026-09-17。面向"前端开发 + AI/Agent 经验"的求职准备。
 > 关联笔记:[Vibe Coding 视觉词典](/posts/Vibe%20Coding%20%E8%A7%86%E8%A7%89%E8%AF%8D%E5%85%B8/)、[详解claude循环工程](/posts/%E8%AF%A6%E8%A7%A3claude%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/)
+> 姊妹篇(纯 React / Vue 框架八股,非 AI 方向):[React 与 Vue 面经资源与高频题](/posts/React%20%E4%B8%8E%20Vue%20%E9%9D%A2%E7%BB%8F%E8%B5%84%E6%BA%90%E4%B8%8E%E9%AB%98%E9%A2%91%E9%A2%98/)
 
 ---
 
