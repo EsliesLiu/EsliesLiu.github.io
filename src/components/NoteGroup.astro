@@ -44,44 +44,50 @@ const { name, items, panelId, motion = false } = Astro.props;
 </section>
 
 <script>
-  // 组件会被每组用一次，这段脚本由 Astro 合并成一份。
-  const reduce =
-    document.documentElement.classList.contains('reduce-motion') ||
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 组件会被每组用一次，这段脚本由 Astro 合并成一份，并且整次访问只执行一次。
+  // ClientRouter 换页会换掉按钮节点，但不会重跑这个模块，所以要在每次 page-load 重新绑。
+  function bindNoteToggles() {
+    const reduce =
+      document.documentElement.classList.contains('reduce-motion') ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.querySelectorAll<HTMLButtonElement>('[data-note-toggle]').forEach((button) => {
-    const group = button.closest<HTMLElement>('.note-group');
-    const panelId = button.getAttribute('aria-controls');
-    const panel = panelId ? document.getElementById(panelId) : null;
-    if (!group || !panel || button.dataset.bound === '1') return;
-    button.dataset.bound = '1';
+    document.querySelectorAll<HTMLButtonElement>('[data-note-toggle]').forEach((button) => {
+      const group = button.closest<HTMLElement>('.note-group');
+      const panelId = button.getAttribute('aria-controls');
+      const panel = panelId ? document.getElementById(panelId) : null;
+      if (!group || !panel || button.dataset.bound === '1') return;
+      button.dataset.bound = '1';
 
-    const lockIfCollapsed = () => {
-      if (group.classList.contains('is-collapsed')) panel.inert = true;
-    };
-
-    button.addEventListener('click', () => {
-      const willCollapse = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', willCollapse ? 'false' : 'true');
-      group.classList.toggle('is-collapsed', willCollapse);
-
-      if (!willCollapse) {
-        // 先解开再播展开，否则里面的链接在动画过程中点不到。
-        panel.inert = false;
-        return;
-      }
-
-      if (reduce) {
-        lockIfCollapsed();
-        return;
-      }
-
-      const onEnd = (event: TransitionEvent) => {
-        if (event.target !== panel || event.propertyName !== 'grid-template-rows') return;
-        panel.removeEventListener('transitionend', onEnd);
-        lockIfCollapsed();
+      const lockIfCollapsed = () => {
+        if (group.classList.contains('is-collapsed')) panel.inert = true;
       };
-      panel.addEventListener('transitionend', onEnd);
+
+      button.addEventListener('click', () => {
+        const willCollapse = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', willCollapse ? 'false' : 'true');
+        group.classList.toggle('is-collapsed', willCollapse);
+
+        if (!willCollapse) {
+          // 先解开再播展开，否则里面的链接在动画过程中点不到。
+          panel.inert = false;
+          return;
+        }
+
+        if (reduce) {
+          lockIfCollapsed();
+          return;
+        }
+
+        const onEnd = (event: TransitionEvent) => {
+          if (event.target !== panel || event.propertyName !== 'grid-template-rows') return;
+          panel.removeEventListener('transitionend', onEnd);
+          lockIfCollapsed();
+        };
+        panel.addEventListener('transitionend', onEnd);
+      });
     });
-  });
+  }
+
+  bindNoteToggles();
+  document.addEventListener('astro:page-load', bindNoteToggles);
 </script>
