@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Masonry, { type MasonryItem } from '../../components/Masonry/Masonry';
+
+// 先用 React Bits 示例里的 picsum 图把瀑布流跑起来。换成本地图时改 img，并带上真实宽高。
+const items: MasonryItem[] = [
+  { id: '1015', img: 'https://picsum.photos/id/1015/600/900?grayscale', width: 600, height: 900, title: 'Alexey Topolyanskiy', url: 'https://unsplash.com/photos/-oWyJoSqBRM' },
+  { id: '1011', img: 'https://picsum.photos/id/1011/600/750?grayscale', width: 600, height: 750, title: 'Roberto Nickson', url: 'https://unsplash.com/photos/7BjmDICVloE' },
+  { id: '1020', img: 'https://picsum.photos/id/1020/600/800?grayscale', width: 600, height: 800, title: 'Adam Willoughby-Knox', url: 'https://unsplash.com/photos/_snqARKTgoc' },
+  { id: '1018', img: 'https://picsum.photos/id/1018/600/660?grayscale', width: 600, height: 660, title: 'Andrew Ridley', url: 'https://unsplash.com/photos/Kt5hRENuotI' },
+  { id: '1016', img: 'https://picsum.photos/id/1016/600/520?grayscale', width: 600, height: 520, title: 'Philippe Wuyts', url: 'https://unsplash.com/photos/_h7aBovKia4' },
+  { id: '1025', img: 'https://picsum.photos/id/1025/600/850?grayscale', width: 600, height: 850, title: 'Matthew Wiebe', url: 'https://unsplash.com/photos/U5rMrSI7Pn4' },
+  { id: '1031', img: 'https://picsum.photos/id/1031/600/720?grayscale', width: 600, height: 720, title: 'Mike Wilson', url: 'https://unsplash.com/photos/rM7B4DheQc0' },
+  { id: '1035', img: 'https://picsum.photos/id/1035/600/680?grayscale', width: 600, height: 680, title: 'Jared Erondu', url: 'https://unsplash.com/photos/j4PaE7E2_Ws' },
+  { id: '1040', img: 'https://picsum.photos/id/1040/600/950?grayscale', width: 600, height: 950, title: 'Rachel Davis', url: 'https://unsplash.com/photos/tn2rBnvIl9I' },
+  { id: '1043', img: 'https://picsum.photos/id/1043/600/600?grayscale', width: 600, height: 600, title: 'Christian Joudrey', url: 'https://unsplash.com/photos/mWRR1xj95hg' },
+  { id: '1050', img: 'https://picsum.photos/id/1050/600/780?grayscale', width: 600, height: 780, title: 'Joseph Barrientos', url: 'https://unsplash.com/photos/xcC5ozHk_N8' },
+  { id: '1055', img: 'https://picsum.photos/id/1055/600/640?grayscale', width: 600, height: 640, title: 'Neil Thomas', url: 'https://unsplash.com/photos/12rzbJhQ89E' },
+];
+---
+
+<BaseLayout title="画廊" description="瀑布流照片。">
+  <div class="shell gallery-page">
+    <header class="page-header">
+      <h1>画廊</h1>
+      <p>点开看大图，鼠标拖动能改顺序。</p>
+    </header>
+    <Masonry
+      client:load
+      items={items}
+      columnWidth={240}
+      gap={12}
+      radius={12}
+      animateFrom="bottom"
+      hoverEffect="zoom"
+      captions="hover"
+      lightbox
+      draggable
+      columns="auto"
+      stagger={0.05}
+      duration={0.6}
+      bounce={0.15}
+      blurToFocus
+      focusOnHover={false}
+      parallax={0}
+      revealOnScroll
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .gallery-page {
+    padding-bottom: 4rem;
+  }
+</style>

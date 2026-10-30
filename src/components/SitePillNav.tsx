@@ -8,6 +8,7 @@ import PillNav, { type PillNavItem } from './PillNav/PillNav';
 const items: PillNavItem[] = [
   { label: '文章', href: '/posts/' },
   { label: '随笔', href: '/essays/' },
+  { label: '画廊', href: '/gallery/' },
   { label: '关于', href: '/about/' },
 ];
 
