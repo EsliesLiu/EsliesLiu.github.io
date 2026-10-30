@@ -174,7 +174,7 @@ function rewriteSegment(segment, title) {
     missingImages.push({ title, ref: src });
     return missingLabel(alt, src);
   });
-  next = next.replace(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g, (full, target, alias) => {
+  next = next.replace(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g, (_full, target, alias) => {
     const name = path.basename(target.trim());
     const href = titles.get(name) ?? titles.get(target.trim());
     const label = (alias ?? name).trim();

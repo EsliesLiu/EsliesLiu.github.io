@@ -698,8 +698,10 @@ const Masonry = ({
 
   const onLeave = (event: ReactPointerEvent) => {
     if (settingsRef.current.focusOnHover) setDimmed(null);
-    event.currentTarget.style.removeProperty('--masonry-tilt-x');
-    event.currentTarget.style.removeProperty('--masonry-tilt-y');
+    // currentTarget 默认是 Element，没有 style。卡片实际是 a / button / div。
+    const card = event.currentTarget as HTMLElement;
+    card.style.removeProperty('--masonry-tilt-x');
+    card.style.removeProperty('--masonry-tilt-y');
   };
 
   const onTilt = (event: ReactPointerEvent) => {
