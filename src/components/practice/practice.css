@@ -1,0 +1,758 @@
+/* 练习页沿用原背诵页的浅色卡片布局。作用域锁在 .practice-app，避免盖到站点顶栏。 */
+.practice-app {
+  --primary: #4f46e5;
+  --primary-light: #6366f1;
+  --primary-bg: #eef2ff;
+  --accent: #f59e0b;
+  --accent-bg: #fef3c7;
+  --green: #10b981;
+  --green-bg: #d1fae5;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --blue-bg: #dbeafe;
+  --gray-light: #f3f4f6;
+  --gray-border: #e5e7eb;
+  --bg: #f9fafb;
+  --card-bg: #ffffff;
+  --text: #1f2937;
+  --text-light: #6b7280;
+  --sidebar-w: 288px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  position: relative;
+  display: flex;
+  height: calc(100svh - 4.25rem);
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color-scheme: light;
+}
+
+.practice-app button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.practice-app input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.site-main:has(.practice-app) {
+  overflow: hidden;
+}
+
+.practice-gate {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.practice-gate form {
+  width: min(420px, 100%);
+  background: var(--card-bg);
+  border: 1px solid var(--gray-border);
+  border-radius: 12px;
+  padding: 28px 24px 24px;
+  box-shadow: var(--shadow-lg);
+}
+
+.practice-gate h1 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.practice-gate p {
+  margin: 0 0 18px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.practice-gate label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.practice-gate input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+}
+
+.practice-gate input:focus {
+  border-color: var(--primary);
+}
+
+.practice-gate .gate-error {
+  margin: 10px 0 0;
+  color: var(--red);
+  font-size: 13px;
+}
+
+.practice-gate button {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.practice-gate button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.practice-app .sidebar {
+  width: var(--sidebar-w);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border-right: 1px solid var(--gray-border);
+  overflow: hidden;
+}
+
+.practice-app .sidebar-header {
+  padding: 20px 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+}
+
+.practice-app .sidebar-header h1 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.practice-app .sidebar-header p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.practice-app .progress-overview {
+  padding: 16px;
+  border-bottom: 1px solid var(--gray-border);
+}
+
+.practice-app .progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  margin: 8px 0 4px;
+  background: var(--gray-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.practice-app .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), #34d399);
+  border-radius: 4px;
+}
+
+.practice-app .progress-text {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.practice-app .progress-text strong {
+  color: var(--text);
+}
+
+.practice-app .mem {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.practice-app .rev {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.practice-app .chapter-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.practice-app .chapter-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  text-align: left;
+  border-left: 3px solid transparent;
+  color: inherit;
+}
+
+.practice-app .chapter-item:hover {
+  background: var(--gray-light);
+}
+
+.practice-app .chapter-item.active {
+  background: var(--primary-bg);
+  border-left-color: var(--primary);
+}
+
+.practice-app .chapter-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  background: var(--gray-light);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.practice-app .chapter-item.active .chapter-num {
+  background: var(--primary);
+  color: #fff;
+}
+
+.practice-app .chapter-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.practice-app .chapter-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.practice-app .chapter-progress {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.practice-app .chapter-count {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.practice-app .sidebar-footer {
+  padding: 14px 16px 20px;
+  border-top: 1px solid var(--gray-border);
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.practice-app .main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.practice-app .topbar {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid var(--gray-border);
+}
+
+.practice-app .menu-toggle {
+  display: none;
+  padding: 6px 10px;
+  background: var(--gray-light);
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.practice-app .search-box {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--gray-light);
+  border-radius: 8px;
+}
+
+.practice-app .search-box input {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  color: var(--text);
+}
+
+.practice-app .mode-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: var(--gray-light);
+  border-radius: 9px;
+}
+
+.practice-app .mode-tab {
+  padding: 6px 14px;
+  border-radius: 7px;
+  background: none;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.practice-app .mode-tab.active {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+.practice-app .content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 24px 60px;
+}
+
+.practice-app .content-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.practice-app .content-header p {
+  margin: 4px 0 18px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.practice-app .qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.practice-app .qa-card {
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.practice-app .qa-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.practice-app .qa-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.practice-app .qa-question {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.practice-app .qa-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.practice-app .qa-tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.practice-app .tag-chapter {
+  background: var(--blue-bg);
+  color: #1e40af;
+}
+
+.practice-app .tag-mastered {
+  background: var(--green-bg);
+  color: #065f46;
+}
+
+.practice-app .tag-review {
+  background: var(--accent-bg);
+  color: #92400e;
+}
+
+.practice-app .qa-answer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--gray-border);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.practice-app .qa-line {
+  white-space: pre-wrap;
+}
+
+.practice-app .qa-answer table,
+.practice-app .quiz-answer table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 13px;
+}
+
+.practice-app .qa-answer th,
+.practice-app .qa-answer td,
+.practice-app .quiz-answer th,
+.practice-app .quiz-answer td {
+  padding: 7px 9px;
+  border: 1px solid var(--gray-border);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.65;
+}
+
+.practice-app .qa-answer th,
+.practice-app .quiz-answer th {
+  background: #f1f5f9;
+  font-weight: 700;
+}
+
+.practice-app .qa-answer img,
+.practice-app .quiz-answer img {
+  display: block;
+  max-width: 100%;
+  margin: 10px 0;
+  border: 1px solid var(--gray-border);
+  border-radius: 8px;
+}
+
+.practice-app .qa-actions,
+.practice-app .quiz-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.practice-app .qa-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.practice-app .btn-show {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.practice-app .btn-mastered {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.practice-app .btn-mastered.active {
+  background: var(--green);
+  color: #fff;
+}
+
+.practice-app .btn-review {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.practice-app .btn-review.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.practice-app .btn-unlearned {
+  background: var(--gray-light);
+  color: var(--text-light);
+}
+
+.practice-app .btn-unlearned.active {
+  background: #6b7280;
+  color: #fff;
+}
+
+.practice-app .quiz-container,
+.practice-app .chapter-stats,
+.practice-app .stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.practice-app .quiz-container {
+  padding: 32px;
+}
+
+.practice-app .quiz-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.practice-app .quiz-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.practice-app .quiz-progress {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.practice-app .quiz-question {
+  margin: 8px 0 0;
+  padding: 20px;
+  background: var(--gray-light);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.practice-app .quiz-answer {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--primary-bg);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.practice-app .quiz-actions {
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.practice-app .quiz-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.practice-app .quiz-btn.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.practice-app .quiz-btn.show {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.practice-app .quiz-btn.ok {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.practice-app .quiz-btn.review {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.practice-app .quiz-result {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.practice-app .quiz-result h3 {
+  margin: 0 0 12px;
+  font-size: 24px;
+}
+
+.practice-app .quiz-result .score {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.practice-app .quiz-result .detail {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.practice-app .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.practice-app .stat-card {
+  padding: 20px;
+  text-align: center;
+}
+
+.practice-app .stat-value {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.practice-app .stat-value.green { color: var(--green); }
+.practice-app .stat-value.amber { color: var(--accent); }
+.practice-app .stat-value.blue { color: var(--blue); }
+.practice-app .stat-value.red { color: var(--red); }
+
+.practice-app .stat-label {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.practice-app .chapter-stats {
+  padding: 22px;
+}
+
+.practice-app .chapter-stats h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.practice-app .chapter-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.practice-app .chapter-stat-name {
+  width: 170px;
+  flex-shrink: 0;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.practice-app .chapter-stat-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--gray-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.practice-app .chapter-stat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), #34d399);
+}
+
+.practice-app .chapter-stat-text {
+  width: 70px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.practice-app .empty {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.practice-app .mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .practice-app .sidebar {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .practice-app .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .practice-app .mobile-overlay.show {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    padding: 0;
+  }
+
+  .practice-app .menu-toggle {
+    display: block;
+  }
+
+  .practice-app .content {
+    padding: 16px 14px 60px;
+  }
+
+  .practice-app .quiz-container {
+    padding: 20px 16px;
+  }
+
+  .practice-app .chapter-stat-name {
+    width: 110px;
+  }
+}

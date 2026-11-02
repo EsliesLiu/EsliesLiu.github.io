@@ -19,6 +19,10 @@ interface Props {
   accent?: 'posts' | 'essays';
   ogType?: 'website' | 'article';
   flush?: boolean;
+  /** 练习页不进索引。内容在密码之后才加载。 */
+  robots?: string;
+  hideFooter?: boolean;
+  hideBlur?: boolean;
 }
 
 const {
@@ -27,6 +31,9 @@ const {
   accent = 'posts',
   ogType = 'website',
   flush = false,
+  robots,
+  hideFooter = false,
+  hideBlur = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${site.name}` : site.name;
@@ -42,6 +49,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
@@ -84,9 +92,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
     <main class:list={['site-main', { flush }]}>
       <slot />
     </main>
-    <Footer />
+    {!hideFooter && <Footer />}
     {/* 整页在 window 上滚。target=page 把模糊条固定在视口底部；parent 只认内层滚动容器。 */}
-    <GradualBlur
+    {!hideBlur && <GradualBlur
       client:load
       position="bottom"
       height="6rem"
@@ -101,6 +109,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
       saturation={1}
       hoverIntensity={1}
       zIndex={12}
-    />
+    />}
   </body>
 </html>

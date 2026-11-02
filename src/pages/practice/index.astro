@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PracticeApp from '../../components/practice/PracticeApp';
+---
+
+<BaseLayout
+  title="练习"
+  description="高项案例背诵。"
+  robots="noindex, nofollow"
+  hideFooter
+  hideBlur
+>
+  <PracticeApp client:load />
+</BaseLayout>

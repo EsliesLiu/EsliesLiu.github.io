@@ -37,7 +37,8 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !page.endsWith('/rss.xml') && !page.endsWith('/rss.xml/'),
+      filter: (page) =>
+        !page.endsWith('/rss.xml') && !page.endsWith('/rss.xml/') && !page.includes('/practice'),
     }),
   ],
   vite: {

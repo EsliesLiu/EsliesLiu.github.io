@@ -10,6 +10,7 @@ const items: PillNavItem[] = [
   { label: '随笔', href: '/essays/' },
   { label: '画廊', href: '/gallery/' },
   { label: '关于', href: '/about/' },
+  { label: '案例练习', href: '/practice/' },
 ];
 
 // 顶栏跨路由保留后，服务端传进来的 activeHref 还是上一页的。当前项按地址自己算。
