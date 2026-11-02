@@ -77,8 +77,9 @@ body {
   outline-offset: 3px;
 }
 
+/* 左右各 1.5rem，不设最大宽度。窗口变宽时内容跟着变，边距不再被撑开。 */
 .shell {
-  width: min(1080px, calc(100% - 3rem));
+  width: calc(100% - 3rem);
   margin-inline: auto;
 }
 
