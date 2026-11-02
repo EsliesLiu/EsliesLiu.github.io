@@ -1,35 +1,43 @@
-/* 练习页沿用原背诵页的浅色卡片布局。作用域锁在 .practice-app，避免盖到站点顶栏。 */
+/*
+  练习页吃主站的颜色。html[data-theme] 一变，背景、文字、强调色跟着变。
+  卡片只比页面背景抬一点，不另做一套白底。
+*/
 .practice-app {
-  --primary: #4f46e5;
-  --primary-light: #6366f1;
-  --primary-bg: #eef2ff;
-  --accent: #f59e0b;
-  --accent-bg: #fef3c7;
-  --green: #10b981;
-  --green-bg: #d1fae5;
-  --red: #ef4444;
-  --blue: #3b82f6;
-  --blue-bg: #dbeafe;
-  --gray-light: #f3f4f6;
-  --gray-border: #e5e7eb;
-  --bg: #f9fafb;
-  --card-bg: #ffffff;
-  --text: #1f2937;
-  --text-light: #6b7280;
+  --primary: var(--color-accent);
+  --primary-bg: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --accent: #fbbf24;
+  --accent-bg: color-mix(in srgb, var(--accent) 18%, transparent);
+  --green: #34d399;
+  --green-bg: color-mix(in srgb, var(--green) 18%, transparent);
+  --red: #f87171;
+  --blue: var(--color-accent);
+  --blue-bg: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --gray-light: color-mix(in srgb, var(--color-ink) 7%, transparent);
+  --gray-border: var(--color-line);
+  --bg: var(--color-bg);
+  --card-bg: color-mix(in srgb, var(--color-ink) 5%, var(--color-bg));
+  --text: var(--color-ink);
+  --text-light: var(--color-muted);
+  --on-fill: var(--color-bg);
   --sidebar-w: 288px;
   --radius: 10px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow: none;
+  --shadow-lg: none;
   position: relative;
   display: flex;
   height: calc(100svh - 4.25rem);
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   font-size: 15px;
   line-height: 1.7;
-  color-scheme: light;
+}
+
+/* 白天底是浅的，状态色要压深，字才能看清。 */
+html[data-theme="light"] .practice-app {
+  --accent: #b45309;
+  --green: #047857;
+  --red: #b91c1c;
 }
 
 .practice-app button {
@@ -88,7 +96,7 @@
   padding: 10px 12px;
   border: 1px solid var(--gray-border);
   border-radius: 8px;
-  background: #fff;
+  background: transparent;
   color: var(--text);
   outline: none;
 }
@@ -109,7 +117,7 @@
   padding: 10px 16px;
   border-radius: 8px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-fill);
   font-weight: 700;
 }
 
@@ -123,15 +131,16 @@
   flex: none;
   display: flex;
   flex-direction: column;
-  background: var(--card-bg);
+  background: var(--bg);
   border-right: 1px solid var(--gray-border);
   overflow: hidden;
 }
 
 .practice-app .sidebar-header {
   padding: 20px 16px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-  color: #fff;
+  background: transparent;
+  color: var(--text);
+  border-bottom: 1px solid var(--gray-border);
 }
 
 .practice-app .sidebar-header h1 {
@@ -143,7 +152,7 @@
 .practice-app .sidebar-header p {
   margin: 0;
   font-size: 12px;
-  opacity: 0.8;
+  color: var(--text-light);
 }
 
 .practice-app .progress-overview {
@@ -228,7 +237,7 @@
 
 .practice-app .chapter-item.active .chapter-num {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-fill);
 }
 
 .practice-app .chapter-info {
@@ -282,8 +291,9 @@
   gap: 14px;
   flex-wrap: wrap;
   padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.96);
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
   border-bottom: 1px solid var(--gray-border);
+  backdrop-filter: blur(12px);
 }
 
 .practice-app .menu-toggle {
@@ -313,6 +323,10 @@
   color: var(--text);
 }
 
+.practice-app .search-box input::placeholder {
+  color: var(--text-light);
+}
+
 .practice-app .mode-tabs {
   display: flex;
   gap: 6px;
@@ -332,10 +346,9 @@
 }
 
 .practice-app .mode-tab.active {
-  background: #fff;
+  background: var(--card-bg);
   color: var(--primary);
   font-weight: 700;
-  box-shadow: var(--shadow);
 }
 
 .practice-app .content {
@@ -412,17 +425,17 @@
 
 .practice-app .tag-chapter {
   background: var(--blue-bg);
-  color: #1e40af;
+  color: var(--primary);
 }
 
 .practice-app .tag-mastered {
   background: var(--green-bg);
-  color: #065f46;
+  color: var(--green);
 }
 
 .practice-app .tag-review {
   background: var(--accent-bg);
-  color: #92400e;
+  color: var(--accent);
 }
 
 .practice-app .qa-answer {
@@ -442,7 +455,7 @@
   width: 100%;
   margin: 10px 0;
   border-collapse: collapse;
-  background: #fff;
+  background: transparent;
   font-size: 13px;
 }
 
@@ -459,7 +472,7 @@
 
 .practice-app .qa-answer th,
 .practice-app .quiz-answer th {
-  background: #f1f5f9;
+  background: var(--gray-light);
   font-weight: 700;
 }
 
@@ -468,6 +481,8 @@
   display: block;
   max-width: 100%;
   margin: 10px 0;
+  /* 配图本身是浅底，垫一层白，换到黑夜也不会糊成一块。 */
+  background: #fff;
   border: 1px solid var(--gray-border);
   border-radius: 8px;
 }
@@ -499,7 +514,7 @@
 
 .practice-app .btn-mastered.active {
   background: var(--green);
-  color: #fff;
+  color: var(--on-fill);
 }
 
 .practice-app .btn-review {
@@ -509,7 +524,7 @@
 
 .practice-app .btn-review.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-fill);
 }
 
 .practice-app .btn-unlearned {
@@ -518,8 +533,8 @@
 }
 
 .practice-app .btn-unlearned.active {
-  background: #6b7280;
-  color: #fff;
+  background: var(--text-light);
+  color: var(--on-fill);
 }
 
 .practice-app .quiz-container,
@@ -585,7 +600,7 @@
 
 .practice-app .quiz-btn.primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-fill);
 }
 
 .practice-app .quiz-btn.show {
